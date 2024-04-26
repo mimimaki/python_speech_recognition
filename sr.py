@@ -1,3 +1,6 @@
+# This is a project by Miikka Mäki, initially written 26.04.2024
+# Just started to play aroung speech recognition, it's a cool tool
+
 import speech_recognition as sr
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,13 +16,22 @@ plot = False
 def draw_plots(audio):
     sample_rate, data = wavfile.read(audio)
     time = np.arange(len(data)) / sample_rate
-    plt.figure(figsize=(12,6))
+    plt.subplot(2, 1, 1)
     plt.plot(time, data)
     plt.xlabel('Time (s)')
     plt.ylabel('Amplitude')
-    plt.show()
 
-    pdb.set_trace()
+    frequencies, times, power_spectrum = stft(data, fs=sample_rate, nperseg=1024)
+    power_spectrum_db = 10 * np.log10(np.abs(power_spectrum))
+    plt.subplot(2, 1, 2)
+    plt.pcolormesh(times, frequencies, power_spectrum_db, shading='gouraud')
+    plt.title('Spectrogram')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Frequency (Hz)')
+    plt.colorbar(label='Power (dB)')
+
+    plt.tight_layout()
+    plt.show()
 
 while(stop==False):
 # Open microphone
